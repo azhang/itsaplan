@@ -28,6 +28,7 @@ import {
 } from './instance';
 import { sendAuthEmail } from './mail';
 import { readAuthExtensions } from './extensions';
+import { appHandoff } from './app-handoff';
 
 // Frontend origins allowed to call the auth handler. Mandatory config: cookies, the
 // WebAuthn relying party and the cookie domain are all derived from it, so a deploy
@@ -935,6 +936,10 @@ function createAuth() {
       // endpoints are documented automatically. This is docs-only: it adds no table,
       // so `auth:generate` is not needed. The planner's own OpenAPI docs stay at /docs.
       openAPI(),
+      // Signs the native app shells in through the system browser, where passkeys,
+      // security keys and Google work, and hands them a session of their own. Adds
+      // /app-handoff/* and reuses the `verification` table, so it adds none.
+      appHandoff(trustedOrigins[0]),
       // A build's own (./extensions). Typed as none, so the instance's type stays the core's.
       ...(extensions.plugins as []),
     ],
