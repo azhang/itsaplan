@@ -40,6 +40,8 @@ const VERIFIER = /^[A-Za-z0-9_~.-]{43,128}$/; // RFC 7636 §4.1
 interface Flow {
   challenge: string;
   state: string;
+  // Known only to this browser's confirmation page; the Continue link carries it.
+  confirm: string;
 }
 
 const sha256 = (value: string) => createHash('sha256').update(value).digest('base64url');
@@ -56,17 +58,25 @@ const escapeHtml = (value: string) =>
     (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!,
   );
 
-function confirmPage(email: string, action: string): Response {
+function confirmPage(email: string, href: string): Response {
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>Sign in to the app</title>
 <style>body{font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;margin:0;background:#fafafa;color:#171717}
-main{max-width:360px;padding:16px}button{font:inherit;padding:8px 16px;border-radius:8px;border:0;background:#08090a;color:#fbfbfa}
-@media (prefers-color-scheme:dark){body{background:#131313;color:#f5f5f5}button{background:#fbfbfa;color:#08090a}}</style></head>
+main{max-width:360px;padding:16px}a{display:inline-block;font:inherit;padding:8px 16px;border-radius:8px;background:#08090a;color:#fbfbfa;text-decoration:none}
+@media (prefers-color-scheme:dark){body{background:#131313;color:#f5f5f5}a{background:#fbfbfa;color:#08090a}}</style></head>
 <body><main><h1 style="font-size:20px">Sign in to the It's a Plan app?</h1>
 <p>The app on this device will be signed in as <strong>${escapeHtml(email)}</strong>. Continue only if you just asked the app to sign in.</p>
-<form method="post" action="${escapeHtml(action)}"><button type="submit">Continue</button></form></main></body></html>`;
+<a href="${escapeHtml(href)}">Continue</a></main></body></html>`;
   return new Response(html, {
-    headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' },
+    headers: {
+      'content-type': 'text/html; charset=utf-8',
+      'cache-control': 'no-store',
+      // Never inside another site's frame, where a click could be tricked out of the user.
+      'content-security-policy':
+        "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'",
+      'x-frame-options': 'DENY',
+      'referrer-policy': 'no-referrer',
+    },
   });
 }
 
@@ -80,7 +90,7 @@ export function appHandoff(webOrigin: string) {
         if (!CHALLENGE.test(challenge) || !STATE.test(state)) {
           throw ctx.error('BAD_REQUEST', { message: 'Invalid challenge or state' });
         }
-        const flow: Flow = { challenge, state };
+        const flow: Flow = { challenge, state, confirm: generateRandomString(32) };
         await ctx.setSignedCookie(COOKIE, JSON.stringify(flow), ctx.context.secret, {
           ...ctx.context.authCookies.sessionToken.attributes,
           maxAge: FLOW_TTL_S,
@@ -91,22 +101,30 @@ export function appHandoff(webOrigin: string) {
         );
       }),
 
-      // GET asks the signed-in browser to confirm; the form posts back here to issue
-      // the token. The POST must come from that form, on the API's own origin: a page
-      // elsewhere must not be able to confirm on the user's behalf.
+      // Without `confirm`, asks the signed-in browser to confirm. Its Continue link
+      // comes back with the flow's confirm code, which only that page knows, so a page
+      // elsewhere can't confirm on the user's behalf. A link, not a form: better-auth
+      // refuses a POST whose Origin is null, which some browsers send here.
       appHandoffFinish: createAuthEndpoint(
         '/app-handoff/finish',
-        { method: ['GET', 'POST'], use: [sessionMiddleware] },
+        { method: 'GET', use: [sessionMiddleware] },
         async (ctx) => {
           const raw = await ctx.getSignedCookie(COOKIE, ctx.context.secret);
           const flow = raw ? (JSON.parse(raw) as Flow) : null;
-          if (!flow || !CHALLENGE.test(flow.challenge) || !STATE.test(flow.state)) {
+          if (
+            !flow ||
+            !CHALLENGE.test(flow.challenge) ||
+            !STATE.test(flow.state) ||
+            typeof flow.confirm !== 'string'
+          ) {
             throw ctx.redirect(webOrigin);
           }
-          const action = `${ctx.context.baseURL}/app-handoff/finish`;
-          if (ctx.request?.method !== 'POST')
-            return confirmPage(ctx.context.session.user.email, action);
-          if (ctx.request.headers.get('origin') !== new URL(ctx.context.baseURL).origin) {
+          const confirm = ctx.query?.confirm;
+          if (confirm == null) {
+            const href = `${ctx.context.baseURL}/app-handoff/finish?confirm=${flow.confirm}`;
+            return confirmPage(ctx.context.session.user.email, href);
+          }
+          if (!sameDigest(String(confirm), flow.confirm)) {
             throw ctx.error('FORBIDDEN', { message: 'Confirm the sign-in from its own page' });
           }
           expireCookie(ctx, {
