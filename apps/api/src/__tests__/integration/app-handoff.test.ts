@@ -64,8 +64,13 @@ async function browserFlow(cookie: string, challenge: string, state: string) {
   return { start, confirm, issued, location, token: location.searchParams.get('token') ?? '' };
 }
 
-const consume = (token: string, verifier: string) =>
-  get(`/app-handoff/consume?token=${token}&verifier=${verifier}`);
+// The app loads consume itself, so the request is not from any site.
+const consume = (token: string, verifier: string, site = 'none') =>
+  app.handle(
+    new Request(`${AUTH}/app-handoff/consume?token=${token}&verifier=${verifier}`, {
+      headers: { 'sec-fetch-site': site },
+    }),
+  );
 
 describe('app sign-in handoff', () => {
   beforeEach(resetDb);
@@ -104,6 +109,16 @@ describe('app sign-in handoff', () => {
 
     expect((await consume(token, pkce().verifier)).status).toBe(401);
     expect((await consume(token, verifier)).status).toBe(401);
+  });
+
+  it('refuses a consume link followed from a page (login CSRF)', async () => {
+    const browser = await signUpTestUser();
+    const { verifier, challenge, state } = pkce();
+    const { token } = await browserFlow(browser.cookie, challenge, state);
+
+    expect((await consume(token, verifier, 'cross-site')).status).toBe(403);
+    expect((await consume(token, verifier, 'same-site')).status).toBe(403);
+    expect((await consume(token, verifier)).status).toBe(302);
   });
 
   it('uses a token once', async () => {

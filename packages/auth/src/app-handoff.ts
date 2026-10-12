@@ -20,7 +20,7 @@ import { generateRandomString } from 'better-auth/crypto';
 //   3. `finish` asks the user to confirm, then redirects to itsaplan://auth with a
 //      single-use token that lives three minutes.
 //   4. The app opens `consume` in its web view with the token and the verifier, which
-//      creates a new session there.
+//      creates a new session there. Only an app-started navigation may open it.
 //
 // Any app can claim the itsaplan:// scheme, so a token alone is worthless: `consume`
 // also needs the verifier, which never left the app (PKCE, RFC 7636). The confirmation
@@ -132,6 +132,12 @@ export function appHandoff(webOrigin: string) {
         async (ctx) => {
           const token = String(ctx.query?.token ?? '');
           const verifier = String(ctx.query?.verifier ?? '');
+          // Only a navigation the app starts itself (Sec-Fetch-Site: none). A link to
+          // here from any page, even this server's, would let someone sign the reader
+          // in to an account of their own (login CSRF).
+          if (ctx.request?.headers.get('sec-fetch-site') !== 'none') {
+            throw ctx.error('FORBIDDEN', { message: 'Open this from the app' });
+          }
           if (!token || !VERIFIER.test(verifier)) {
             throw ctx.error('BAD_REQUEST', { message: 'Invalid token or verifier' });
           }
