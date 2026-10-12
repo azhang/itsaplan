@@ -54,12 +54,9 @@ async function browserFlow(cookie: string, challenge: string, state: string) {
   const start = await get(`/app-handoff/start?challenge=${challenge}&state=${state}`, cookie);
   const jar = withCookies(cookie, start);
   const confirm = await get('/app-handoff/finish', jar);
-  const issued = await app.handle(
-    new Request(`${AUTH}/app-handoff/finish`, {
-      method: 'POST',
-      headers: { cookie: jar, origin: 'http://localhost:3000' },
-    }),
-  );
+  const page = await confirm.clone().text();
+  const href = /href="([^"]+)"/.exec(page)?.[1]?.replaceAll('&amp;', '&') ?? '';
+  const issued = await app.handle(new Request(href, { headers: { cookie: jar } }));
   const location = new URL(issued.headers.get('location') ?? 'about:blank');
   return { start, confirm, issued, location, token: location.searchParams.get('token') ?? '' };
 }
@@ -159,21 +156,27 @@ describe('app sign-in handoff', () => {
     expect((await get(`/app-handoff/start?challenge=${challenge}&state=x`)).status).toBe(400);
   });
 
-  it('issues no token on a cross-site POST', async () => {
+  it("issues no token without the confirmation page's code", async () => {
     const browser = await signUpTestUser();
     const { challenge, state } = pkce();
     const start = await get(
       `/app-handoff/start?challenge=${challenge}&state=${state}`,
       browser.cookie,
     );
-    const forged = await app.handle(
-      new Request(`${AUTH}/app-handoff/finish`, {
-        method: 'POST',
-        headers: { cookie: withCookies(browser.cookie, start), origin: 'https://evil.example' },
-      }),
-    );
-    expect(forged.status).toBe(403);
-    expect(forged.headers.get('location') ?? '').not.toStartWith('itsaplan:');
+    const jar = withCookies(browser.cookie, start);
+    for (const code of ['guessed', '']) {
+      const forged = await get(`/app-handoff/finish?confirm=${code}`, jar);
+      expect(forged.status).toBe(403);
+      expect(forged.headers.get('location') ?? '').not.toStartWith('itsaplan:');
+    }
+  });
+
+  it("keeps the confirmation page out of other sites' frames", async () => {
+    const browser = await signUpTestUser();
+    const { challenge, state } = pkce();
+    const { confirm } = await browserFlow(browser.cookie, challenge, state);
+    expect(confirm.headers.get('x-frame-options')).toBe('DENY');
+    expect(confirm.headers.get('content-security-policy')).toContain("frame-ancestors 'none'");
   });
 
   it('sends a browser that is not signed in to the login page, then on to finish', async () => {
