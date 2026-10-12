@@ -19,6 +19,7 @@ import {
   isAccountDeactivated,
 } from './instance';
 import { sendAuthEmail } from './mail';
+import { appHandoff } from './app-handoff';
 
 // Frontend origins allowed to call the auth handler. Mandatory config: cookies, the
 // WebAuthn relying party and the cookie domain are all derived from it, so a deploy
@@ -790,6 +791,10 @@ export const auth = betterAuth({
     // endpoints are documented automatically. This is docs-only: it adds no table,
     // so `auth:generate` is not needed. The planner's own OpenAPI docs stay at /docs.
     openAPI(),
+    // Signs the native app shells in through the system browser, where passkeys,
+    // security keys and Google work, and hands them a session of their own. Adds
+    // /app-handoff/* and reuses the `verification` table, so it adds none.
+    appHandoff(trustedOrigins[0]),
   ],
 
   // The frontend runs on a different origin (Next :3001) — allow its requests.

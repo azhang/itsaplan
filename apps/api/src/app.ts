@@ -305,6 +305,9 @@ export const app = new Elysia()
         // given. Empty falls back to a translated default.
         oidcLabel: await getOidcLabel(),
         hasUsers: (await db.$count(user)) > 0,
+        // The native app shells sign in through the system browser when this is set
+        // (/api/auth/app-handoff/*); an older server leaves them on the web view.
+        appHandoff: true,
       };
     },
     {
