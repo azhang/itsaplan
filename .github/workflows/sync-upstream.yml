@@ -1,0 +1,38 @@
+name: Sync upstream
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+concurrency: sync-upstream
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for new upstream commits
+        id: check
+        run: |
+          upstream=$(git ls-remote https://github.com/croffasia/itsaplan.git refs/heads/main | cut -f1)
+          fork=$(git ls-remote https://github.com/${{ github.repository }}.git refs/heads/main | cut -f1)
+          [ "$upstream" != "$fork" ] && echo "changed=true" >> "$GITHUB_OUTPUT" || echo "Upstream unchanged"
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.changed == 'true'
+        with:
+          ref: deploy
+          fetch-depth: 0
+          # GITHUB_TOKEN cannot push commits that touch .github/workflows, and upstream changes its own.
+          token: ${{ secrets.SYNC_TOKEN }}
+
+      - name: Fast-forward main and rebase deploy onto it
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git remote add upstream https://github.com/croffasia/itsaplan.git
+          git fetch upstream main
+          git push origin upstream/main:refs/heads/main
+          git rebase upstream/main
+          git push --force-with-lease origin HEAD:deploy
