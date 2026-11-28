@@ -9,6 +9,7 @@ import {
 import { and, asc, eq } from 'drizzle-orm';
 import { documentVisibleTo } from './access';
 import { HttpError } from '#shared/lib';
+import { issueSources } from '#modules/issues/sources';
 
 export interface DocumentIssueLinkRow {
   issueId: number;
@@ -17,6 +18,7 @@ export interface DocumentIssueLinkRow {
   title: string;
   archived: boolean;
   createdAt: string;
+  source: string | null;
 }
 
 export interface DocumentInitiativeLinkRow {
@@ -99,6 +101,7 @@ export async function listDocumentIssueLinks(
     .innerJoin(issue, eq(issue.id, projectDocumentIssue.issueId))
     .where(and(eq(projectDocumentIssue.documentId, documentId), eq(issue.projectId, projectId)))
     .orderBy(asc(issue.sequenceNumber));
+  const sources = await issueSources(rows.map((row) => row.issueId));
   return rows.map((row) => ({
     issueId: row.issueId,
     sequenceNumber: row.sequenceNumber,
@@ -106,6 +109,7 @@ export async function listDocumentIssueLinks(
     title: row.title,
     archived: row.archivedAt !== null,
     createdAt: row.createdAt.toISOString(),
+    source: sources.get(row.issueId) ?? null,
   }));
 }
 
@@ -150,7 +154,7 @@ export async function addDocumentIssueLink(input: {
   issueId: number;
   userId: string;
 }): Promise<DocumentIssueLinkRow> {
-  return db.transaction(async (tx) => {
+  const link = await db.transaction(async (tx) => {
     const document = await visibleDocument(input.projectId, input.documentId, input.userId, tx);
     if (!document) throw new HttpError(404, 'Document not found');
     if (document.archivedAt !== null)
@@ -188,6 +192,7 @@ export async function addDocumentIssueLink(input: {
       createdAt: created.createdAt.toISOString(),
     };
   });
+  return { ...link, source: (await issueSources([link.issueId])).get(link.issueId) ?? null };
 }
 
 export async function removeDocumentIssueLink(input: {

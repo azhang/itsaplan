@@ -18,10 +18,12 @@ import { IssueCardSubtaskRow } from './IssueCardSubtaskRow';
 export function IssueCardSubtasks({
   issueId,
   maps,
+  showSource,
   onOpen,
 }: {
   issueId: number;
   maps: Maps;
+  showSource: boolean;
   onOpen?: (id: number) => void;
 }) {
   const t = useTranslations('workItems');
@@ -71,7 +73,13 @@ export function IssueCardSubtasks({
       </button>
       {open &&
         subtasks.map((subtask) => (
-          <IssueCardSubtaskRow key={subtask.id} subtask={subtask} maps={maps} onOpen={onOpen} />
+          <IssueCardSubtaskRow
+            key={subtask.id}
+            subtask={subtask}
+            maps={maps}
+            showSource={showSource}
+            onOpen={onOpen}
+          />
         ))}
     </div>
   );

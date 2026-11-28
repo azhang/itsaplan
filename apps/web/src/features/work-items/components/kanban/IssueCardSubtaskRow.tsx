@@ -4,6 +4,7 @@ import { type Maps } from '@/utils/project';
 import { noDragProps } from '@/lib/dnd';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import SourceMark from '@/components/common/git/SourceMark';
 import { StateIcon } from '@/features/issue/components/shared/IssueIcons';
 import { SubtaskProgress } from '../shared/SubtaskProgress';
 
@@ -11,10 +12,12 @@ import { SubtaskProgress } from '../shared/SubtaskProgress';
 export function IssueCardSubtaskRow({
   subtask,
   maps,
+  showSource,
   onOpen,
 }: {
   subtask: Issue;
   maps: Maps;
+  showSource: boolean;
   onOpen?: (id: number) => void;
 }) {
   const titleRef = useRef<HTMLSpanElement>(null);
@@ -52,6 +55,7 @@ export function IssueCardSubtaskRow({
               className="size-3 shrink-0"
             />
           )}
+          {showSource && subtask.source && <SourceMark source={subtask.source} />}
           <span className="shrink-0 font-mono text-[10px] text-muted-foreground">
             {subtask.identifier}
           </span>

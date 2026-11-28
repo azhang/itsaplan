@@ -88,7 +88,6 @@ export default function IssueDetailSections({
         identifier={issue.identifier}
         issueTitle={issue.title}
         links={issue.development ?? []}
-        repositoryIssue={issue.repositoryIssue ?? null}
         canEdit={canEdit}
         canManage={permissions.can('repositories', 'edit')}
         adding={adding?.section === 'development' ? adding.mode : null}

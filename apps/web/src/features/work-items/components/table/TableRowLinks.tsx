@@ -2,6 +2,7 @@ import type { IssueLinkRef } from '@/lib/api/endpoints/issues';
 import { type Maps } from '@/utils/project';
 import { cn } from '@/lib/utils';
 import { useLinkRelationLabel } from '@/hooks/useLinkRelationLabel';
+import ActorSourceIcon from '@/components/common/git/ActorSourceIcon';
 import { StateIcon } from '@/features/issue/components/shared/IssueIcons';
 import { useIssueLinks } from '../../context/useIssueLinks';
 
@@ -11,10 +12,12 @@ import { useIssueLinks } from '../../context/useIssueLinks';
 export function TableRowLinks({
   links: refs,
   maps,
+  showSource,
   onOpenIssue,
 }: {
   links: IssueLinkRef[] | undefined;
   maps: Maps;
+  showSource: boolean;
   onOpenIssue: (id: number) => void;
 }) {
   const relationLabel = useLinkRelationLabel();
@@ -54,6 +57,7 @@ export function TableRowLinks({
                   className="size-3.5 shrink-0"
                 />
               )}
+              {showSource && link.issue.source && <ActorSourceIcon source={link.issue.source} />}
               <span className="shrink-0 tabular-nums">{link.issue.identifier}</span>
               <span dir="auto" className="truncate">
                 {link.issue.title}

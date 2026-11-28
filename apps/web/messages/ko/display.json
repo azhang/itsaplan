@@ -30,6 +30,7 @@
     "cycle": "사이클"
   },
   "properties": {
+    "source": "출처",
     "id": "ID",
     "status": "상태",
     "priority": "우선순위",

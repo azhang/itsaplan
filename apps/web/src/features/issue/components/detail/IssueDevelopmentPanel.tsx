@@ -1,10 +1,9 @@
-import type { DevelopmentLink, LinkedRepositoryIssue } from '@/lib/api/endpoints/git';
+import type { DevelopmentLink } from '@/lib/api/endpoints/git';
 import { usePersistedOpen } from '@/hooks/usePersistedOpen';
 import IssueDevelopmentAddMenu from './IssueDevelopmentAddMenu';
 import IssueDevelopmentCreateDialog from './IssueDevelopmentCreateDialog';
 import IssueDevelopmentLinkRow from './IssueDevelopmentLinkRow';
 import IssueDevelopmentLinkDialog from './IssueDevelopmentLinkDialog';
-import IssueDevelopmentRepositoryIssueRow from './IssueDevelopmentRepositoryIssueRow';
 import IssueSection from './IssueSection';
 import IssueSectionAddButton from './IssueSectionAddButton';
 import IssueSectionHeading from './IssueSectionHeading';
@@ -12,15 +11,14 @@ import { useTranslations } from 'next-intl';
 
 export type IssueDevelopmentAdding = 'link' | 'create';
 
-// The pull requests, merge requests and the repository issue linked to the issue.
-// The section stays off the page while nothing is linked; the issue's add bar opens
-// the same two dialogs as the heading's menu.
+// The pull requests and merge requests linked to the issue. The section stays off the
+// page while nothing is linked; the issue's add bar opens the same two dialogs as the
+// heading's menu.
 export default function IssueDevelopmentPanel({
   issueId,
   identifier,
   issueTitle,
   links,
-  repositoryIssue,
   canEdit,
   canManage,
   adding,
@@ -30,7 +28,6 @@ export default function IssueDevelopmentPanel({
   identifier: string;
   issueTitle: string;
   links: DevelopmentLink[];
-  repositoryIssue: LinkedRepositoryIssue | null;
   canEdit: boolean;
   canManage: boolean;
   // Which dialog is open. Held by the issue detail, whose add bar opens them too.
@@ -59,13 +56,13 @@ export default function IssueDevelopmentPanel({
     </>
   );
 
-  if (links.length === 0 && !repositoryIssue) return dialogs;
+  if (links.length === 0) return dialogs;
 
   return (
     <IssueSection collapsed={!open}>
       <IssueSectionHeading
         label={t('title')}
-        tally={String(links.length + (repositoryIssue ? 1 : 0))}
+        tally={String(links.length)}
         open={open}
         onToggle={toggle}
         actions={
@@ -80,7 +77,6 @@ export default function IssueDevelopmentPanel({
       />
       {open && (
         <div className="-mx-2 flex flex-col">
-          {repositoryIssue && <IssueDevelopmentRepositoryIssueRow issue={repositoryIssue} />}
           {links.map((link) => (
             <IssueDevelopmentLinkRow
               key={link.id}

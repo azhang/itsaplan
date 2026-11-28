@@ -7,6 +7,7 @@ import { usePermissions } from '@/hooks/usePermissions';
 import { cn } from '@/lib/utils';
 import IssueContextMenu from '@/features/issue/components/actions/IssueContextMenu';
 import { DRAGGABLE_FOCUS } from '../../utils/dnd';
+import ActorSourceIcon from '@/components/common/git/ActorSourceIcon';
 
 // Memoized because the unscheduled panel renders again on every scroll step.
 export const CalendarIssueCard = memo(function CalendarIssueCard({
@@ -54,6 +55,7 @@ export const CalendarIssueCard = memo(function CalendarIssueCard({
           className="inline-block size-1.5 shrink-0 rounded-full"
           style={{ backgroundColor: color }}
         />
+        {issue.source && <ActorSourceIcon source={issue.source} />}
         <span className="shrink-0 text-muted-foreground tabular-nums">{issue.identifier}</span>
         <span
           dir="auto"

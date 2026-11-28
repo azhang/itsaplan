@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import type { ProjectDetail } from '@/lib/api/endpoints/projects';
 import { issueColor, type Maps } from '@/utils/project';
 import { cn } from '@/lib/utils';
+import ActorSourceIcon from '@/components/common/git/ActorSourceIcon';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIssueSubtaskFold, useSubtasks } from '../../context/useSubtasks';
 import { effSpan, LINK_ROW_H, MIN_TITLED_BAR_W, type TimelineColumn } from '../../utils/timeline';
@@ -84,6 +85,7 @@ export function TimelineSubtaskRows({
                 {/* Marks the row as nested under the issue row above: the sub-rows
                     are otherwise only indented, which reads as a link row. */}
                 <CornerDownRight className="size-3 shrink-0 text-muted-foreground/60 rtl:-scale-x-100" />
+                {subtask.source && <ActorSourceIcon source={subtask.source} />}
                 <span className="shrink-0 tabular-nums">{subtask.identifier}</span>
                 <span
                   dir="auto"

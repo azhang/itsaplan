@@ -11,6 +11,7 @@ import IssueContextMenu from '@/features/issue/components/actions/IssueContextMe
 import { DropLine } from '../shared/DropLine';
 import { EditableBuiltinCell } from '../shared/EditableBuiltinCell';
 import { EditableCustomCell } from '../shared/EditableCustomCell';
+import ActorSourceIcon from '@/components/common/git/ActorSourceIcon';
 import { IssueIdentifier } from '../shared/IssueIdentifier';
 import { SubtaskProgress } from '../shared/SubtaskProgress';
 import { useIsBlocked } from '../../context/useIssueLinks';
@@ -29,6 +30,7 @@ export function TableRow({
   issue,
   orderedColumns,
   maps,
+  showSource,
   showId,
   indented,
   alignTop,
@@ -43,6 +45,7 @@ export function TableRow({
   issue: BoardIssue;
   orderedColumns: OrderedColumn[];
   maps: Maps;
+  showSource: boolean;
   showId: boolean;
   // Rows under a sub-section are indented to sit below their sub-header.
   indented: boolean;
@@ -115,6 +118,7 @@ export function TableRow({
       >
         {showDropLine && <DropLine className="top-0" />}
         <div className="flex min-w-0 items-center gap-2">
+          {showSource && issue.source && <ActorSourceIcon source={issue.source} />}
           {showId && (
             <IssueIdentifier
               issue={issue}
@@ -161,9 +165,19 @@ export function TableRow({
         )}
 
         {subtasks.open && (
-          <TableRowSubtasks issueId={issue.id} maps={maps} onOpenIssue={onOpenIssue} />
+          <TableRowSubtasks
+            issueId={issue.id}
+            maps={maps}
+            showSource={showSource}
+            onOpenIssue={onOpenIssue}
+          />
         )}
-        <TableRowLinks links={issue.links} maps={maps} onOpenIssue={onOpenIssue} />
+        <TableRowLinks
+          links={issue.links}
+          maps={maps}
+          showSource={showSource}
+          onOpenIssue={onOpenIssue}
+        />
       </div>
     </IssueContextMenu>
   );

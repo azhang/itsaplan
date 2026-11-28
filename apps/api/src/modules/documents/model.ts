@@ -1,5 +1,6 @@
 import { t } from 'elysia';
 import { AttachmentContent, ViewAttachmentsResponse } from '#modules/attachments/model';
+import { IssueSource } from '#modules/issues/model';
 
 export const documentParams = t.Object({
   projectKey: t.String(),
@@ -189,6 +190,7 @@ export const DocumentIssueLinkResponse = t.Object({
   title: t.String(),
   archived: t.Boolean(),
   createdAt: t.String(),
+  source: IssueSource,
 });
 
 export const DocumentIssueLinkListResponse = t.Array(DocumentIssueLinkResponse);

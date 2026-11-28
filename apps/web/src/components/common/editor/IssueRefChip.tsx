@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useIssueRefs } from '@/context/issueRefs';
 import { issuePath, splitProjectRef } from '@/utils/paths';
+import SourceMark from '@/components/common/git/SourceMark';
 import type { ResolvedLinkPreview } from './resolveLinkPreview';
 import { useLinkPreviewQuery } from './useLinkPreviewQuery';
 
@@ -49,6 +50,9 @@ export default function IssueRefChip({
     <a href={path} className="issue-ref">
       {preview?.status && (
         <span className="issue-ref-dot" style={{ backgroundColor: preview.status.color }} />
+      )}
+      {preview?.source && (
+        <SourceMark source={preview.source} className="issue-ref-host text-current" />
       )}
       <span className="issue-ref-id">{id}</span>
       {preview?.issueTitle && <span className="issue-ref-title">{preview.issueTitle}</span>}

@@ -13,6 +13,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import ArchivedBadge from '@/components/common/ArchivedBadge';
+import SourceMark from '@/components/common/git/SourceMark';
 import { byKey } from '@/utils/messageKey';
 import { useLinkRelationLabel } from '@/hooks/useLinkRelationLabel';
 import { useLinkIssues } from '../../services/links.service';
@@ -92,6 +93,7 @@ export default function IssueLinkDialog({
               <Hash />
               <span className="flex-1 truncate">{hit.title}</span>
               {hit.archived && <ArchivedBadge />}
+              {hit.source && <SourceMark source={hit.source} />}
               <span className="shrink-0 font-mono text-xs text-muted-foreground">
                 {hit.identifier}
               </span>

@@ -1,4 +1,6 @@
 {
+  "repositoryIssueOpen": "{provider} işi · Açık",
+  "repositoryIssueClosed": "{provider} işi · Kapatıldı",
   "system": "Sistem",
   "viewValue": "görünüm",
   "notFound": "İş bulunamadı.",
@@ -443,8 +445,7 @@
       "failed": "Başarısız",
       "canceled": "İptal edildi",
       "skipped": "Atlandı"
-    },
-    "repositoryIssue": "{provider} işi"
+    }
   },
   "documents": {
     "title": "Belgeler",

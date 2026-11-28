@@ -2,6 +2,7 @@ import type { IssueLinkRef } from '@/lib/api/endpoints/issues';
 import type { ProjectDetail } from '@/lib/api/endpoints/projects';
 import { issueColor, type Maps } from '@/utils/project';
 import { cn } from '@/lib/utils';
+import ActorSourceIcon from '@/components/common/git/ActorSourceIcon';
 import { useLinkRelationLabel } from '@/hooks/useLinkRelationLabel';
 import { useIssueLinks } from '../../context/useIssueLinks';
 import { effSpan, LINK_ROW_H, MIN_TITLED_BAR_W, type TimelineColumn } from '../../utils/timeline';
@@ -81,6 +82,7 @@ export function TimelineLinkRows({
                 {/* Fixed width so the identifiers stay in one column when a row
                     leaves its relation unnamed. */}
                 <span className="w-20 shrink-0">{named && relationLabel(link.relation)}</span>
+                {link.issue.source && <ActorSourceIcon source={link.issue.source} />}
                 <span className="shrink-0 tabular-nums">{link.issue.identifier}</span>
                 <span dir="auto" className="min-w-0 flex-1 truncate">
                   {link.issue.title}

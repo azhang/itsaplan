@@ -30,6 +30,7 @@
     "cycle": "Цикл"
   },
   "properties": {
+    "source": "Источник",
     "id": "ID",
     "status": "Статус",
     "priority": "Приоритет",

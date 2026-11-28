@@ -92,6 +92,7 @@ import { deleteThreadsWhere } from '#modules/agents/core/runtime/memory';
 import { queueStatusRuns } from '#modules/agents/schedules/issue-runs';
 import { applySubtaskAutomation } from './automation';
 import { pushLinkedIssueState } from '#modules/git/issue-sync';
+import { attachIssueSources } from './sources';
 import { assertWipLimit, columnAutoAssignee, wipLimitBreach } from '#modules/columns/service';
 
 // Data access for issues and their per-issue data: labels, custom field values,
@@ -168,6 +169,8 @@ export interface IssueRow {
   // UI can filter by custom fields without a per-issue fetch. Only listIssues
   // populates this; mapIssue alone leaves it empty.
   fieldValues: IssueFieldValueEntry[];
+  // Set by attachIssueSources; mapIssue alone leaves it null.
+  source: string | null;
 }
 
 function mapIssue(row: typeof issue.$inferSelect, projectKey: string): IssueRow {
@@ -202,6 +205,7 @@ function mapIssue(row: typeof issue.$inferSelect, projectKey: string): IssueRow 
     shareExpiresAt: shared && row.shareExpiresAt ? iso(row.shareExpiresAt) : null,
     labelIds: [],
     fieldValues: [],
+    source: null,
   };
 }
 
@@ -293,6 +297,7 @@ export interface IssueSearchHit {
   updatedAt: string;
   statusSince: string;
   completedAt: string | null;
+  source: string | null;
 }
 
 // When an issue entered the completed state it is still in, read the way the
@@ -419,6 +424,7 @@ type HitRow = Omit<
   IssueSearchHit,
   | 'identifier'
   | 'parent'
+  | 'source'
   | 'labelIds'
   | 'archived'
   | 'createdAt'
@@ -470,6 +476,7 @@ function toHit(
     statusSince: iso(statusSince),
     completedAt: completedAt ? iso(completedAt) : null,
     estimatePoints: numOrNull(estimatePoints),
+    source: null,
   };
 }
 
@@ -602,7 +609,7 @@ export async function searchIssues(
   const rows = filters.limit !== undefined ? await base.limit(filters.limit) : await base;
 
   const hits = rows.map((r) => toHit(r, project.key));
-  await attachLabels(hits);
+  await Promise.all([attachLabels(hits), attachIssueSources(hits)]);
   return hits;
 }
 
@@ -677,7 +684,7 @@ export async function searchIssuesInProjects(
     .orderBy(...order)
     .limit(limit);
   const hits = rows.map(toCrossProjectHit);
-  await attachLabels(hits);
+  await Promise.all([attachLabels(hits), attachIssueSources(hits)]);
   return hits;
 }
 
@@ -728,7 +735,7 @@ export async function listIssuesInProjects(
     .orderBy(...listOrder(filters, hitOrder(undefined)))
     .limit(filters.limit);
   const hits = rows.map(toCrossProjectHit);
-  await attachLabels(hits);
+  await Promise.all([attachLabels(hits), attachIssueSources(hits)]);
   return hits;
 }
 
@@ -831,7 +838,8 @@ function projectIssueIds(projectId: number, archived: boolean): SQLWrapper {
 }
 
 // Fills in what an issue row leaves out: its labels, when it entered its column, its
-// initiative and cycle, the time logged on it, and its field values when asked for.
+// initiative and cycle, the time logged on it, where it came from, and its field values
+// when asked for.
 // The reads do not depend on each other, so they run at once. `ids` selects the same
 // issues as the list does.
 async function attachDetails(
@@ -845,6 +853,7 @@ async function attachDetails(
     attachStatusSince(issues, ids),
     attachGroupings(issues, ids),
     attachLoggedMinutes(issues, ids),
+    attachIssueSources(issues, ids),
   ]);
 }
 

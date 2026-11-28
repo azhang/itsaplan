@@ -19,6 +19,8 @@ export interface IssueRef {
   columnId: number;
   typeId: number | null;
   archived: boolean;
+  // Null until attachIssueSources sets it, and on a public share.
+  source: string | null;
 }
 
 function refRowsWhere(condition: SQL) {
@@ -48,6 +50,7 @@ function toRef(row: Awaited<ReturnType<typeof refRowsWhere>>[number]): IssueRef 
     columnId: row.columnId,
     typeId: row.typeId,
     archived: row.archivedAt !== null,
+    source: null,
   };
 }
 

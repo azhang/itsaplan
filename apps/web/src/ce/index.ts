@@ -10,6 +10,7 @@ export { default as BrandPanel } from './BrandPanel';
 export { default as GodSectionExtras } from './GodSectionExtras';
 export { default as godSections } from './godSections';
 export { default as IssueSectionExtras } from './IssueSectionExtras';
+export { default as IssueTitleExtras } from './IssueTitleExtras';
 export { cloudMessages, loadCloudMessages } from './messages';
 export { default as NoTeamStart } from './NoTeamStart';
 export { default as proEdition } from './proEdition';

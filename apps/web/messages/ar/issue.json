@@ -1,4 +1,6 @@
 {
+  "repositoryIssueOpen": "مهمة {provider} · مفتوحة",
+  "repositoryIssueClosed": "مهمة {provider} · مغلقة",
   "system": "النظام",
   "viewValue": "عرض",
   "notFound": "المهمة غير موجودة.",
@@ -443,8 +445,7 @@
       "failed": "فشل",
       "canceled": "ملغي",
       "skipped": "تم تخطيه"
-    },
-    "repositoryIssue": "مهمة {provider}"
+    }
   },
   "documents": {
     "title": "المستندات",

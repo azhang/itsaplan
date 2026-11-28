@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Loader2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { DocumentIssueLink } from '@/lib/api/endpoints/documents';
+import ActorSourceIcon from '@/components/common/git/ActorSourceIcon';
 import { Button } from '@/components/ui/button';
 import { issuePath } from '@/utils/paths';
 
@@ -28,6 +29,7 @@ export default function DocumentWorkItemRow({
         href={issuePath(projectKey, item.sequenceNumber)}
         className="flex h-9 min-w-0 flex-1 items-center gap-2.5 rounded-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >
+        {item.source && <ActorSourceIcon source={item.source} />}
         <span className="shrink-0 font-mono text-xs font-medium text-muted-foreground" dir="ltr">
           {item.identifier}
         </span>

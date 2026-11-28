@@ -16,9 +16,9 @@ import {
   type PropertyKey,
 } from '@/utils/viewSettings';
 
-// The grid columns after the (always-present) title cell. 'id' is not here — the
-// identifier renders inside the title cell.
-export type TableColumn = Exclude<DisplayProperty, 'id'>;
+// The grid columns after the (always-present) title cell. 'source' and 'id' are not
+// here — the source's mark and the identifier render inside the title cell.
+export type TableColumn = Exclude<DisplayProperty, 'source' | 'id'>;
 export const COLUMN_META: Record<TableColumn, { width: string }> = {
   status: { width: '130px' },
   statusAge: { width: '88px' },
@@ -251,8 +251,8 @@ function minTableWidth(tracks: string[]): number {
 }
 
 // The table layout derived from the display settings: the ordered columns (each
-// enabled built-in — except 'id', which lives in the title cell — or existing
-// custom field, in settings.properties order), the CSS grid template, the
+// enabled built-in — except 'source' and 'id', which live in the title cell — or
+// existing custom field, in settings.properties order), the CSS grid template, the
 // scroll min-width, and whether cells should top-align (a markdown column can
 // make a row tall).
 interface TableLayout {
@@ -262,8 +262,8 @@ interface TableLayout {
   alignTop: boolean;
 }
 
-// The columns `properties` names, in its order: each built-in but 'id', and each
-// custom field found in `customFields`. Any other key is dropped.
+// The columns `properties` names, in its order: each built-in but 'source' and 'id',
+// and each custom field found in `customFields`. Any other key is dropped.
 export function orderedColumns(
   properties: PropertyKey[],
   customFields: CustomField[],

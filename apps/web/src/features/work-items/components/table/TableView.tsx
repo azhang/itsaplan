@@ -142,6 +142,7 @@ export default function TableView({
             issue={item.issue}
             orderedColumns={columns}
             maps={maps}
+            showSource={settings.properties.includes('source')}
             showId={settings.properties.includes('id')}
             alignTop={alignTop}
             indented={subgrouped}

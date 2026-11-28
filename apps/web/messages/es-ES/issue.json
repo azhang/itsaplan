@@ -1,4 +1,6 @@
 {
+  "repositoryIssueOpen": "Ticket de {provider} · Abierto",
+  "repositoryIssueClosed": "Ticket de {provider} · Cerrado",
   "system": "Sistema",
   "viewValue": "vista",
   "notFound": "No se ha encontrado el ticket.",
@@ -443,8 +445,7 @@
       "failed": "Fallida",
       "canceled": "Cancelada",
       "skipped": "Saltada"
-    },
-    "repositoryIssue": "Ticket de {provider}"
+    }
   },
   "documents": {
     "title": "Documentos",

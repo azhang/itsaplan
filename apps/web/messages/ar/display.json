@@ -30,6 +30,7 @@
     "cycle": "الدورة"
   },
   "properties": {
+    "source": "المصدر",
     "id": "المعرّف",
     "status": "الحالة",
     "priority": "الأولوية",

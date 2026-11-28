@@ -30,6 +30,7 @@
     "cycle": "Döngü"
   },
   "properties": {
+    "source": "Kaynak",
     "id": "Kimlik",
     "status": "Durum",
     "priority": "Öncelik",

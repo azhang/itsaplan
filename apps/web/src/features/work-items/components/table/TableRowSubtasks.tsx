@@ -1,6 +1,7 @@
 import { CornerDownRight } from 'lucide-react';
 import { type Maps } from '@/utils/project';
 import { cn } from '@/lib/utils';
+import ActorSourceIcon from '@/components/common/git/ActorSourceIcon';
 import { StateIcon } from '@/features/issue/components/shared/IssueIcons';
 import { useSubtasks } from '../../context/useSubtasks';
 import { SubtaskProgress } from '../shared/SubtaskProgress';
@@ -12,10 +13,12 @@ import { SubtaskProgress } from '../shared/SubtaskProgress';
 export function TableRowSubtasks({
   issueId,
   maps,
+  showSource,
   onOpenIssue,
 }: {
   issueId: number;
   maps: Maps;
+  showSource: boolean;
   onOpenIssue: (id: number) => void;
 }) {
   const subtasks = useSubtasks(issueId);
@@ -47,6 +50,7 @@ export function TableRowSubtasks({
                 className="size-3.5 shrink-0"
               />
             )}
+            {showSource && subtask.source && <ActorSourceIcon source={subtask.source} />}
             <span className="shrink-0 tabular-nums">{subtask.identifier}</span>
             <span
               dir="auto"

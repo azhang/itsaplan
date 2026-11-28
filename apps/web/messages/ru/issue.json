@@ -1,4 +1,6 @@
 {
+  "repositoryIssueOpen": "Задача в {provider} · Открыта",
+  "repositoryIssueClosed": "Задача в {provider} · Закрыта",
   "system": "Система",
   "viewValue": "посмотреть",
   "notFound": "Задача не найдена.",
@@ -443,8 +445,7 @@
       "failed": "Ошибка",
       "canceled": "Отменён",
       "skipped": "Пропущен"
-    },
-    "repositoryIssue": "Задача в {provider}"
+    }
   },
   "documents": {
     "title": "Документы",

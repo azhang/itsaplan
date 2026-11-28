@@ -1,4 +1,6 @@
 {
+  "repositoryIssueOpen": "Issue {provider} · Aperta",
+  "repositoryIssueClosed": "Issue {provider} · Chiusa",
   "system": "Sistema",
   "viewValue": "vista",
   "notFound": "Issue non trovata.",
@@ -443,8 +445,7 @@
       "failed": "Fallita",
       "canceled": "Annullata",
       "skipped": "Saltata"
-    },
-    "repositoryIssue": "Issue {provider}"
+    }
   },
   "documents": {
     "title": "Documenti",

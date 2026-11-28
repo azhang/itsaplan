@@ -5,6 +5,8 @@ import { HttpError } from '#shared/lib';
 import { recordActivityEntries, rowSide, textSide, type ActivityInput } from './activity';
 import { emitIssueEvents } from './webhook-payload';
 import { getIssues } from './service';
+import { issueSources } from './sources';
+import type { IssueRef } from './subtasks';
 
 // Relations between issues of one project. A relation is one row (issue_link);
 // which side of it an issue sits on decides how the relation reads for that
@@ -29,15 +31,7 @@ export interface IssueLinkRow {
   kind: IssueLinkKind;
   direction: IssueLinkDirection;
   // The issue on the other end of the relation.
-  issue: {
-    id: number;
-    sequenceNumber: number;
-    identifier: string;
-    title: string;
-    columnId: number;
-    typeId: number | null;
-    archived: boolean;
-  };
+  issue: IssueRef;
 }
 
 // How a relation reads from the other end, used as the activity feed's subject so
@@ -108,6 +102,7 @@ export async function listIssueLinks(issueId: number): Promise<IssueLinkRow[]> {
       columnId: row.columnId,
       typeId: row.typeId,
       archived: row.archivedAt !== null,
+      source: null,
     },
   }));
 }
@@ -297,6 +292,7 @@ export async function addIssueLink(
       columnId: target.columnId,
       typeId: target.typeId,
       archived: target.archived,
+      source: (await issueSources([target.id])).get(target.id) ?? null,
     },
   };
 }

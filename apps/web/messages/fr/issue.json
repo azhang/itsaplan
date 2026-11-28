@@ -1,4 +1,6 @@
 {
+  "repositoryIssueOpen": "Ticket {provider} · Ouvert",
+  "repositoryIssueClosed": "Ticket {provider} · Fermé",
   "system": "Système",
   "viewValue": "voir",
   "notFound": "Ticket introuvable.",
@@ -443,8 +445,7 @@
       "failed": "En échec",
       "canceled": "Annulé",
       "skipped": "Ignoré"
-    },
-    "repositoryIssue": "Ticket {provider}"
+    }
   },
   "documents": {
     "title": "Documents",

@@ -1,4 +1,6 @@
 {
+  "repositoryIssueOpen": "تسک {provider} · باز",
+  "repositoryIssueClosed": "تسک {provider} · بسته",
   "system": "سیستم",
   "viewValue": "نما",
   "notFound": "تسک پیدا نشد.",
@@ -443,8 +445,7 @@
       "failed": "ناموفق",
       "canceled": "لغو شده",
       "skipped": "رد شده"
-    },
-    "repositoryIssue": "تسک {provider}"
+    }
   },
   "documents": {
     "title": "مستندات",

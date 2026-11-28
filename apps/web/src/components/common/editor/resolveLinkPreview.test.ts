@@ -53,6 +53,7 @@ describe('authorized internal link previews', () => {
       description: 'Read **sources**',
       columnId: 4,
       updatedAt: '2026-09-09T12:00:00Z',
+      source: 'github',
     };
     responses.set('/projects/SYR/issues/13', { body: issue });
     responses.set('/issues/732', { body: issue });
@@ -60,6 +61,7 @@ describe('authorized internal link previews', () => {
       const result = await resolveLinkPreview(path, origin, new AbortController().signal);
       assert.equal(result.title, 'SYR-13 · Check evidence');
       assert.equal(result.status?.name, 'In progress');
+      assert.equal(result.source, 'github');
       assert.equal(result.image, null);
     }
     assert.equal(calls.filter((call) => call.url.pathname === '/projects/SYR/issues/13').length, 2);

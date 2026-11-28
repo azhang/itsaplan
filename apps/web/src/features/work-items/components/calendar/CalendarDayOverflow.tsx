@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import type { Issue } from '@/lib/api/endpoints/issues';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import SourceMark from '@/components/common/git/SourceMark';
 
 // The "+N more" control for a day cell: a popover listing every issue on that day
 // when there are more than the cell shows inline.
@@ -50,6 +51,7 @@ export function CalendarDayOverflow({
                     className="inline-block size-1.5 shrink-0 rounded-full"
                     style={{ backgroundColor: dot(issue) }}
                   />
+                  {issue.source && <SourceMark source={issue.source} />}
                   <span className="shrink-0 text-muted-foreground tabular-nums">
                     {issue.identifier}
                   </span>

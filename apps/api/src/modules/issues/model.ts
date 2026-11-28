@@ -81,6 +81,14 @@ export const IssueFieldValueEntry = t.Object({
   optionIds: t.Array(t.Number()),
 });
 
+// Where an issue came from (attachIssueSources in sources.ts).
+export const IssueSource = t.Nullable(
+  t.String({
+    description:
+      'Where the issue came from: the repository host of the repository issue it is synced with, such as github, or a source an extension adds. Null for an issue made here.',
+  }),
+);
+
 // IssueRow from the service.
 export const IssueResponse = t.Object({
   id: t.Number(),
@@ -121,6 +129,7 @@ export const IssueResponse = t.Object({
   shareExpiresAt: t.Nullable(t.String()),
   labelIds: t.Array(t.Number()),
   fieldValues: t.Array(IssueFieldValueEntry),
+  source: IssueSource,
 });
 
 // IssueFieldValueRow from the service: one applicable custom field with its value on
@@ -144,6 +153,7 @@ export const IssueRefResponse = t.Object({
   columnId: t.Number(),
   typeId: t.Nullable(t.Number()),
   archived: t.Boolean(),
+  source: IssueSource,
 });
 
 export const SubtreeIssueResponse = t.Composite([
@@ -351,6 +361,7 @@ export const IssueSearchHitResponse = t.Object({
   updatedAt: t.String(),
   statusSince: t.String(),
   completedAt: t.Nullable(t.String()),
+  source: IssueSource,
 });
 
 export const CrossProjectIssueHitResponse = t.Composite([

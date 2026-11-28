@@ -16,6 +16,7 @@ export type ResolvedLinkPreview = LinkPreview & {
   kind?: 'project' | 'issue' | 'notes' | 'document' | 'view';
   issueTitle?: string;
   status?: { name: string; color: string };
+  source?: string | null;
   updatedAt?: string;
   noteCount?: number;
   layout?: string;
@@ -52,6 +53,7 @@ async function resolveInternalLinkPreview(
       description: previewExcerpt(issue.description),
       siteName: project.project.name,
       status: project.columns.find((column) => column.id === issue.columnId),
+      source: issue.source,
       updatedAt: issue.updatedAt,
     };
   }

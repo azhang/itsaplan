@@ -1074,6 +1074,12 @@ span.issue-ref {
   flex: none;
   align-self: center;
 }
+.issue-ref-host {
+  width: 0.85em;
+  height: 0.85em;
+  flex: none;
+  align-self: center;
+}
 .issue-ref-title {
   overflow: hidden;
   text-overflow: ellipsis;

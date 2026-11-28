@@ -12,6 +12,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import ArchivedBadge from '@/components/common/ArchivedBadge';
+import SourceMark from '@/components/common/git/SourceMark';
 import { useTranslations } from 'next-intl';
 
 // Picks one of the project's issues, searched server-side (archived included).
@@ -59,6 +60,7 @@ export default function IssuePickerDialog({
               <Hash />
               <span className="flex-1 truncate">{hit.title}</span>
               {hit.archived && <ArchivedBadge />}
+              {hit.source && <SourceMark source={hit.source} />}
               <span className="shrink-0 font-mono text-xs text-muted-foreground">
                 {hit.identifier}
               </span>

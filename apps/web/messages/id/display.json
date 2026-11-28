@@ -30,6 +30,7 @@
     "cycle": "Cycle"
   },
   "properties": {
+    "source": "Sumber",
     "id": "ID",
     "status": "Status",
     "priority": "Prioritas",

@@ -25,6 +25,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { StateIcon } from '@/features/issue/components/shared/IssueIcons';
+import ActorSourceIcon from '@/components/common/git/ActorSourceIcon';
 import { IssueIdentifier } from '../shared/IssueIdentifier';
 import { IssueCardLinks } from './IssueCardLinks';
 import { IssueCardSubtasks } from './IssueCardSubtasks';
@@ -52,6 +53,8 @@ export function IssueCardBody({
   const initiative = issue.initiative ?? undefined;
   const cycle = issue.cycle ?? undefined;
   const column = maps.columnById.get(issue.columnId);
+  const source = has('source') ? issue.source : null;
+  const leadShown = source !== null || has('id');
   const metaShown =
     has('statusAge') ||
     (has('dueDate') && issue.dueDate) ||
@@ -70,16 +73,21 @@ export function IssueCardBody({
 
   return (
     <>
-      {(has('id') || (has('priority') && issue.priority)) && (
+      {(leadShown || (has('priority') && issue.priority)) && (
         <div
-          className={cn('mb-2 flex items-center', has('id') ? 'justify-between' : 'justify-end')}
+          className={cn('mb-2 flex items-center', leadShown ? 'justify-between' : 'justify-end')}
         >
-          {has('id') && (
-            <IssueIdentifier
-              issue={issue}
-              className="text-xs text-muted-foreground"
-              onOpenAncestor={onOpen}
-            />
+          {leadShown && (
+            <span className="flex min-w-0 items-center gap-1.5">
+              {source && <ActorSourceIcon source={source} />}
+              {has('id') && (
+                <IssueIdentifier
+                  issue={issue}
+                  className="text-xs text-muted-foreground"
+                  onOpenAncestor={onOpen}
+                />
+              )}
+            </span>
           )}
           {has('priority') && issue.priority && <PriorityBadge priority={issue.priority} />}
         </div>
@@ -201,8 +209,13 @@ export function IssueCardBody({
         </div>
       )}
 
-      <IssueCardSubtasks issueId={issue.id} maps={maps} onOpen={onOpen} />
-      <IssueCardLinks links={issue.links} maps={maps} onOpen={onOpen} />
+      <IssueCardSubtasks
+        issueId={issue.id}
+        maps={maps}
+        showSource={has('source')}
+        onOpen={onOpen}
+      />
+      <IssueCardLinks links={issue.links} maps={maps} showSource={has('source')} onOpen={onOpen} />
     </>
   );
 }

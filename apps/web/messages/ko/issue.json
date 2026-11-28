@@ -1,4 +1,6 @@
 {
+  "repositoryIssueOpen": "{provider} 이슈 · 열림",
+  "repositoryIssueClosed": "{provider} 이슈 · 종료됨",
   "system": "시스템",
   "viewValue": "보기",
   "notFound": "이슈를 찾을 수 없습니다.",
@@ -443,8 +445,7 @@
       "failed": "실패",
       "canceled": "취소됨",
       "skipped": "건너뜀"
-    },
-    "repositoryIssue": "{provider} 이슈"
+    }
   },
   "documents": {
     "title": "문서",

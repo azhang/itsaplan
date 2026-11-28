@@ -1,4 +1,6 @@
 {
+  "repositoryIssueOpen": "Issue {provider} · Terbuka",
+  "repositoryIssueClosed": "Issue {provider} · Ditutup",
   "system": "Sistem",
   "viewValue": "lihat",
   "notFound": "Issue tidak ditemukan.",
@@ -443,8 +445,7 @@
       "failed": "Gagal",
       "canceled": "Dibatalkan",
       "skipped": "Dilewati"
-    },
-    "repositoryIssue": "Issue {provider}"
+    }
   },
   "documents": {
     "title": "Dokumen",

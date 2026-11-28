@@ -30,6 +30,7 @@
     "cycle": "週期"
   },
   "properties": {
+    "source": "來源",
     "id": "ID",
     "status": "狀態",
     "priority": "優先順序",

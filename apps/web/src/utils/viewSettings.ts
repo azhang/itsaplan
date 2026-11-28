@@ -20,9 +20,10 @@ export type GroupField = BuiltinGroupField | CustomFieldKey;
 
 // Issue properties that can be shown on a Project card or as a Table or Timeline
 // column.
-// 'id' is the issue identifier; 'status' the state; the rest map to issue
-// fields directly.
+// 'source' is the mark of where an issue came from, such as a repository host; 'id' the
+// issue identifier; 'status' the state; the rest map to issue fields directly.
 export type DisplayProperty =
+  | 'source'
   | 'id'
   | 'status'
   | 'priority'
@@ -56,6 +57,7 @@ export const customFieldId = (key: CustomFieldKey): number => Number(key.slice(3
 // toggles and to keep column order stable regardless of toggle order. The name of
 // a property is a message under `display.properties`.
 export const DISPLAY_PROPERTIES: DisplayProperty[] = [
+  'source',
   'id',
   'status',
   'priority',
@@ -211,6 +213,7 @@ const COMMON: Omit<ViewSettings, 'group' | 'subgroup' | 'properties' | 'sort' | 
 // out by date and show none.
 const DEFAULT_PROPERTIES: Record<WorkItemsView, DisplayProperty[]> = {
   kanban: [
+    'source',
     'id',
     'statusAge',
     'priority',

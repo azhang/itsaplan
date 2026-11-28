@@ -85,6 +85,7 @@ import {
 } from './worklogs';
 import { listIssueCycles } from './cycle-history';
 import { moveIssue } from './move';
+import { attachIssueSources } from './sources';
 import {
   createAndLinkPullRequest,
   linkExistingPullRequest,
@@ -555,8 +556,14 @@ export const issueRoutes = new Elysia({ name: 'issues', detail: { tags: ['Issues
   // and move confirmations can show what the action takes along. Web-only.
   .get(
     '/projects/:projectKey/issues/subtree',
-    async ({ project, query }) =>
-      listSubtree(project.id, query.ids.split(',').map(Number).filter(Number.isInteger)),
+    async ({ project, query }) => {
+      const subtree = await listSubtree(
+        project.id,
+        query.ids.split(',').map(Number).filter(Number.isInteger),
+      );
+      await attachIssueSources(subtree);
+      return subtree;
+    },
     {
       params: projectKeyParams,
       query: subtreeQuery,
@@ -599,6 +606,12 @@ export const issueRoutes = new Elysia({ name: 'issues', detail: { tags: ['Issues
       const parent = await getParentRef(issue.parentId);
       const subtasks = await listSubtasks(issue.id);
       const ancestors = await listAncestors(issue.id);
+      await attachIssueSources([
+        ...links.map((link) => link.issue),
+        ...subtasks,
+        ...ancestors,
+        ...(parent ? [parent] : []),
+      ]);
       const checklists = await listChecklists(issue.id);
       const development = await listIssueDevelopmentLinks(issue.id);
       const repositoryIssue = await getLinkedRepositoryIssue(issue.id);
@@ -741,6 +754,12 @@ export const issueRoutes = new Elysia({ name: 'issues', detail: { tags: ['Issues
       const parent = await getParentRef(issue.parentId);
       const subtasks = await listSubtasks(issue.id);
       const ancestors = await listAncestors(issue.id);
+      await attachIssueSources([
+        ...links.map((link) => link.issue),
+        ...subtasks,
+        ...ancestors,
+        ...(parent ? [parent] : []),
+      ]);
       const checklists = await listChecklists(issue.id);
       const development = await listIssueDevelopmentLinks(issue.id);
       const repositoryIssue = await getLinkedRepositoryIssue(issue.id);

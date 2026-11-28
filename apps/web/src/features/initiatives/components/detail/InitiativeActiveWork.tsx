@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import type { ProjectDetail } from '@/lib/api/endpoints/projects';
 import { useShell } from '@/context/shellContext';
 import { StateIcon } from '@/features/issue/components/shared/IssueIcons';
+import ActorSourceIcon from '@/components/common/git/ActorSourceIcon';
 import Avatar from '@/components/common/Avatar';
 
 // The initiative's issues currently in progress (state group 'started'), listed so
@@ -56,6 +57,7 @@ export default function InitiativeActiveWork({
                     className="size-3.5 shrink-0"
                   />
                 )}
+                {issue.source && <ActorSourceIcon source={issue.source} />}
                 <span className="shrink-0 text-muted-foreground tabular-nums">
                   {issue.identifier}
                 </span>

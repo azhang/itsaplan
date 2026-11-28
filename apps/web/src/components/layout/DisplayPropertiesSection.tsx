@@ -58,14 +58,18 @@ export default function DisplayPropertiesSection({
     );
   }
 
-  // The Timeline offers neither the identifier, which its title column always
-  // shows, nor a text or markdown field.
+  // The Timeline's title column always shows the source's mark and the identifier, so it
+  // offers neither, and no text or markdown field.
   const timeline = view === 'timeline';
   return (
     <DisplaySection title={t('sections.columns')} hint={t('rows.dragToReorder')}>
       <ColumnProperties
         properties={settings.properties}
-        builtins={timeline ? DISPLAY_PROPERTIES.filter((p) => p !== 'id') : DISPLAY_PROPERTIES}
+        builtins={
+          timeline
+            ? DISPLAY_PROPERTIES.filter((p) => p !== 'source' && p !== 'id')
+            : DISPLAY_PROPERTIES
+        }
         customFields={timeline ? customFields.filter(isTimelineField) : customFields}
         issueTypes={issueTypes}
         onChange={(properties) => onChange({ properties })}

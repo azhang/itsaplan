@@ -33,6 +33,7 @@ function hit(id: number, projectKey: string): CrossProjectIssueHit {
     dueDate: null,
     labelIds: [],
     archived: false,
+    source: null,
     projectId: projectKey === 'MKT' ? 1 : 2,
     projectRef: `eng.${projectKey}`,
     projectKey,

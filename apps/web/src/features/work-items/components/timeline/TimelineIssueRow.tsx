@@ -8,6 +8,7 @@ import IssueContextMenu from '@/features/issue/components/actions/IssueContextMe
 import { type TimelineDragMode } from '../../hooks/useTimelineDrag';
 import { DRAGGABLE_FOCUS } from '../../utils/dnd';
 import { ROW_H, type Span, type TimelineColumn } from '../../utils/timeline';
+import ActorSourceIcon from '@/components/common/git/ActorSourceIcon';
 import { IssueIdentifier } from '../shared/IssueIdentifier';
 import { SubtaskProgress } from '../shared/SubtaskProgress';
 import { useIssueSubtaskFold } from '../../context/useSubtasks';
@@ -91,6 +92,7 @@ export function TimelineIssueRow({
               onOpen(issue.id);
             }}
           >
+            {issue.source && <ActorSourceIcon source={issue.source} />}
             <IssueIdentifier
               issue={issue}
               className="text-xs text-muted-foreground tabular-nums"

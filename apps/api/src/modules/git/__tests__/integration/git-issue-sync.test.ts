@@ -1,7 +1,7 @@
 import { createHmac } from 'node:crypto';
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
 import { app } from '../../../../app';
-import { authedApi, type Api, createProject } from '#tests/helpers/app';
+import { api, authedApi, type Api, createProject } from '#tests/helpers/app';
 import { signUpTestUser } from '#tests/helpers/auth';
 import { resetDb } from '#tests/helpers/db';
 import { createAgent } from '#tests/helpers/agents';
@@ -348,6 +348,34 @@ describe('Repository issue sync', () => {
         }),
       ]),
     );
+  });
+
+  it('names the host of a linked issue on the board and on the issue, not on a public link', async () => {
+    const s = await setup(fake);
+    await repository(s).patch({ issueSync: 'one_way' });
+    await deliver(s, 'issues', issueEvent('opened', opened));
+    const project = s.asOwner.projects({ projectKey: 'MKT' });
+    const plain = (await project.issues.post({ columnId: s.columns[0]!.id, title: 'Plain' })).data!;
+
+    const board = (await project.issues.board.get()).data!.issues;
+    const linked = board.find((issue) => issue.id !== plain.id)!;
+    expect(linked.source).toBe('github');
+    expect(board.find((issue) => issue.id === plain.id)!.source).toBeNull();
+    const detail = (await s.asOwner.issues({ issueId: linked.id }).get()).data!;
+    expect(detail.source).toBe('github');
+
+    const view = (await project.views.post({ name: 'Board', filters: {} })).data!;
+    const viewToken = (await s.asOwner.views({ viewId: view.id }).share.post({ extended: true }))
+      .data!.token;
+    const issueToken = (
+      await s.asOwner.issues({ issueId: linked.id }).share.post({ extended: true })
+    ).data!.token;
+    const sharedBoard = (await api.share.view({ token: viewToken }).get()).data! as {
+      issues: { id: number; source: string | null }[];
+    };
+    expect(sharedBoard.issues.find((issue) => issue.id === linked.id)!.source).toBeNull();
+    const sharedIssue = (await api.share.issue({ token: issueToken }).get()).data!;
+    expect(sharedIssue.issue.source).toBeNull();
   });
 
   it('notifies nobody a repository issue mentions', async () => {
@@ -1119,7 +1147,11 @@ describe('Repository issue sync', () => {
     expect(await deliver(s, 'issue_comment', comment)).toMatchObject({ handled: 'ignored' });
     expect(fake.stateChanges).toEqual([]);
     const detail = (await s.asOwner.issues({ issueId: created!.id }).get()).data!;
-    expect(detail).toMatchObject({ title: opened.title, repositoryIssue: null });
+    expect(detail).toMatchObject({
+      title: opened.title,
+      repositoryIssue: null,
+      source: null,
+    });
   });
 
   it('adds a repository issue to a column at its hard WIP limit', async () => {

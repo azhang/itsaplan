@@ -30,6 +30,7 @@
     "cycle": "Ciclo"
   },
   "properties": {
+    "source": "Origen",
     "id": "ID",
     "status": "Estado",
     "priority": "Prioridad",

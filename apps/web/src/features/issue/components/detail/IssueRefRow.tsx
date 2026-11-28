@@ -6,6 +6,7 @@ import { issuePath } from '@/utils/paths';
 import { Button } from '@/components/ui/button';
 import PopoverPick from '@/components/common/fields/PopoverPick';
 import ArchivedBadge from '@/components/common/ArchivedBadge';
+import ActorSourceIcon from '@/components/common/git/ActorSourceIcon';
 import {
   historyScrollRestorationAnchorProps,
   historyScrollRestorationLinkProps,
@@ -47,7 +48,10 @@ export default function IssueRefRow({
   const closed = column?.stateType === 'completed' || column?.stateType === 'canceled';
   const label = (
     <>
-      <span className="text-[13px] text-muted-foreground/70 tabular-nums">{issue.identifier}</span>
+      <span className="flex items-center gap-1.5 text-[13px] text-muted-foreground/70 tabular-nums">
+        {issue.source && <ActorSourceIcon source={issue.source} />}
+        {issue.identifier}
+      </span>
       <span className="flex min-w-0 items-center gap-2">
         <span className={cn('truncate text-sm', closed && 'text-muted-foreground/70')}>
           {issue.title}

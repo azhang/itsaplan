@@ -42,6 +42,7 @@ function hit(id: number, identifier: string, title: string): IssueSearchHit {
     dueDate: null,
     labelIds: [],
     archived: false,
+    source: null,
   };
 }
 

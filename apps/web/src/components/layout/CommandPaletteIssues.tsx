@@ -5,6 +5,7 @@ import type { IssueSearchHit } from '@/lib/api/endpoints/issues';
 import { ISSUE_PREFIX } from '@/utils/commandFilter';
 import { CommandGroup, CommandItem, CommandSeparator } from '@/components/ui/command';
 import ArchivedBadge from '@/components/common/ArchivedBadge';
+import SourceMark from '@/components/common/git/SourceMark';
 
 // A palette group of issue hits. The list comes from the server (already filtered
 // and ordered); the ISSUE_PREFIX value keeps cmdk from re-filtering it. A later
@@ -43,6 +44,7 @@ export default function CommandPaletteIssues<T extends IssueSearchHit>({
             <Hash />
             <span className="flex-1 truncate">{issue.title}</span>
             {issue.archived && <ArchivedBadge />}
+            {issue.source && <SourceMark source={issue.source} />}
             <span className="shrink-0 font-mono text-xs text-muted-foreground">
               {issue.identifier}
             </span>

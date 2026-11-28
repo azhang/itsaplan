@@ -8,7 +8,7 @@ import {
   issue,
   issueActivity,
 } from '@repo/db';
-import { and, asc, eq, inArray, isNull, lt, ne, sql } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNull, lt, ne, sql, type SQLWrapper } from 'drizzle-orm';
 import { HttpError } from '#shared/lib';
 import {
   createIssue,
@@ -556,6 +556,23 @@ export async function pushLinkedIssueState(issueId: number, columnId: number): P
       .where(eq(gitManagedRepository.id, row.repositoryId));
     console.error(`[git] could not set ${row.fullName}#${row.number} to ${state}:`, error);
   }
+}
+
+// The host of the repository issue each of these issues is synced with: the source of an
+// issue that came from a repository.
+export async function repositoryHosts(
+  ids: number[] | SQLWrapper,
+): Promise<{ issueId: number; source: string }[]> {
+  return db
+    .select({ issueId: issue.id, source: gitProviderConnection.provider })
+    .from(gitIssueLink)
+    .innerJoin(issue, eq(gitIssueLink.issueId, issue.id))
+    .innerJoin(gitManagedRepository, eq(gitIssueLink.repositoryId, gitManagedRepository.id))
+    .innerJoin(
+      gitProviderConnection,
+      eq(gitManagedRepository.connectionId, gitProviderConnection.id),
+    )
+    .where(and(inArray(gitIssueLink.issueId, ids), sameProject));
 }
 
 export async function getLinkedRepositoryIssue(

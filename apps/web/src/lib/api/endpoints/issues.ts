@@ -78,6 +78,9 @@ export interface Issue {
   shareExpiresAt: string | null;
   labelIds: number[];
   fieldValues: IssueFieldValueEntry[];
+  // Where the issue came from: a repository host, such as 'github', or a source an edition
+  // adds. Null for an issue made here, and on a public share.
+  source: string | null;
 }
 
 // A light search result from GET /projects/:key/issues/search: enough to list and
@@ -98,6 +101,8 @@ export interface IssueSearchHit {
   dueDate: string | null;
   labelIds: number[];
   archived: boolean;
+  // The issue's source, as on Issue.
+  source: string | null;
 }
 
 export interface CrossProjectIssueHit extends IssueSearchHit {
@@ -220,6 +225,8 @@ export interface IssueRef {
   columnId: number;
   typeId: number | null;
   archived: boolean;
+  // The issue's source, as on Issue.
+  source: string | null;
 }
 
 // An issue under the ones a delete, an archive or a move acts on, with the issue it

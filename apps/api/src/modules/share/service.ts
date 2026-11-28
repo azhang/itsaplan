@@ -181,6 +181,8 @@ async function issueBundle(
       parentId: withParent ? visible.parentId : null,
       shareToken: keepShareToken ? issueRow.shareToken : null,
       shareExtended: keepShareToken && issueRow.shareExtended,
+      // The repository may be private.
+      source: null,
       fields,
       links: links.filter((link) => shown(link.issue.id)),
       parent: shownParent,
@@ -395,6 +397,8 @@ export async function getSharedView(token: string): Promise<SharedViewBundle | n
     issues: cards.map((i) => ({
       ...(view.shareExtended ? i : redactIssue(i)),
       shareToken: null,
+      // The repository may be private.
+      source: null,
       links: i.links.filter((link) => shown.has(link.issueId)),
       subtaskCount: subtaskCounts.get(i.id) ?? 0,
     })),

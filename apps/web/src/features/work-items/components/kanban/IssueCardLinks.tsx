@@ -4,6 +4,7 @@ import { noDragProps } from '@/lib/dnd';
 import { cn } from '@/lib/utils';
 import { LINK_RELATION_ICONS } from '@/utils/issueLinks';
 import { useLinkRelationLabel } from '@/hooks/useLinkRelationLabel';
+import SourceMark from '@/components/common/git/SourceMark';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIssueLinks } from '../../context/useIssueLinks';
 
@@ -15,10 +16,12 @@ import { useIssueLinks } from '../../context/useIssueLinks';
 export function IssueCardLinks({
   links: refs,
   maps,
+  showSource,
   onOpen,
 }: {
   links: IssueLinkRef[] | undefined;
   maps: Maps;
+  showSource: boolean;
   onOpen?: (id: number) => void;
 }) {
   const relationLabel = useLinkRelationLabel();
@@ -84,6 +87,7 @@ export function IssueCardLinks({
                         style={{ backgroundColor: column.color }}
                       />
                     )}
+                    {showSource && link.issue.source && <SourceMark source={link.issue.source} />}
                     {link.issue.identifier}
                   </span>
                 </button>

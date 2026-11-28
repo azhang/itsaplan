@@ -1,5 +1,6 @@
 import { DragOverlay } from '@dnd-kit/core';
 import type { Issue } from '@/lib/api/endpoints/issues';
+import SourceMark from '@/components/common/git/SourceMark';
 
 // The card that follows the pointer while a row is dragged, in the table and on
 // the timeline. The row itself stays in place, faded, so the drag reads as
@@ -13,6 +14,7 @@ export function IssueDragOverlay({ issue }: { issue: Issue | null }) {
     <DragOverlay dropAnimation={null}>
       {issue ? (
         <div className="flex max-w-[360px] items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm shadow-lg">
+          {issue.source && <SourceMark source={issue.source} />}
           <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
             {issue.identifier}
           </span>

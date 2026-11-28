@@ -14,6 +14,7 @@ import { fieldSaveKey } from '../../utils/fieldValues';
 import { useEditorKey } from '../../hooks/useEditorKey';
 import IssueAddBar, { type IssueAddTarget } from './IssueAddBar';
 import IssueDetailSections from './IssueDetailSections';
+import IssueRepositoryIssueLink from './IssueRepositoryIssueLink';
 import IssueActivityFeed from './IssueActivityFeed';
 import LastCommentBubble from './LastCommentBubble';
 import IssueDetailSkeleton from './IssueDetailSkeleton';
@@ -30,6 +31,7 @@ import {
   propertiesWidthKey,
 } from '../../utils/propertiesWidth';
 import { useTranslations } from 'next-intl';
+import { IssueTitleExtras } from '@/cloud';
 
 // The body of a issue — title, description, markdown custom fields, the
 // Properties, the add bar, the sections that have something in them, and the
@@ -153,6 +155,10 @@ export default function IssueDetailContent({
           </h1>
         )}
       </div>
+      {issue.repositoryIssue && (
+        <IssueRepositoryIssueLink issue={issue.repositoryIssue} className="mt-1" />
+      )}
+      <IssueTitleExtras project={project} issue={issue} />
 
       {(canEdit || issue.description.trim() !== '') && (
         <MarkdownEditor

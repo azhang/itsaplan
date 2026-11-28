@@ -30,6 +30,7 @@
     "cycle": "周期"
   },
   "properties": {
+    "source": "来源",
     "id": "ID",
     "status": "状态",
     "priority": "优先级",

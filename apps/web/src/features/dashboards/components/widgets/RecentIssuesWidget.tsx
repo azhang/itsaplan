@@ -7,6 +7,7 @@ import { formatShortDate } from '@/utils/dates';
 import { usePriorityLabel } from '@/hooks/usePriorityLabel';
 import { EMPTY_FILTER_SET, applyFilters, isActiveFilterSet, type FilterSet } from '@/utils/filters';
 import type { WidgetConfig } from '@/utils/dashboardWidgets';
+import ActorSourceIcon from '@/components/common/git/ActorSourceIcon';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Recent issues filtered by the same board filter set (status, assignee, priority,
@@ -75,6 +76,7 @@ export default function RecentIssuesWidget({
                     style={{ backgroundColor: column?.color ?? '#6b7280' }}
                     title={column?.name}
                   />
+                  {issue.source && <ActorSourceIcon source={issue.source} />}
                   <span className="shrink-0 text-muted-foreground tabular-nums">
                     {issue.identifier}
                   </span>

@@ -69,6 +69,8 @@ export interface DocumentIssueLink {
   title: string;
   archived: boolean;
   createdAt: string;
+  // The issue's source, as on Issue.
+  source: string | null;
 }
 
 export interface IssueDocumentLink {

@@ -1,4 +1,6 @@
 {
+  "repositoryIssueOpen": "{provider} 工作項目 · 開啟",
+  "repositoryIssueClosed": "{provider} 工作項目 · 已關閉",
   "system": "系統",
   "viewValue": "檢視",
   "notFound": "未找到工作項目。",
@@ -443,8 +445,7 @@
       "failed": "失敗",
       "canceled": "已取消",
       "skipped": "已跳過"
-    },
-    "repositoryIssue": "{provider} 工作項目"
+    }
   },
   "documents": {
     "title": "文件",
